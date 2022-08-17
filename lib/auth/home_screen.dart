@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodapp/auth/my_drawer.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -302,5 +303,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
-MyDrawer() {}

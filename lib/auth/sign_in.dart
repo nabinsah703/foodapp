@@ -1,10 +1,38 @@
-import 'dart:ui';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:foodapp/auth/home_screen.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-class SignIn extends StatelessWidget {
-  const SignIn({Key? key}) : super(key: key);
+class SignIn extends StatefulWidget {
+  SignIn({Key? key}) : super(key: key);
+
+  @override
+  State<SignIn> createState() => _SignInState();
+}
+
+class _SignInState extends State<SignIn> {
+  Future<User?> _googeSignUp() async {
+    try {
+      final GoogleSignIn _googeSignIn = GoogleSignIn(
+        scopes: ['email'],
+      );
+      final FirebaseAuth _auth = FirebaseAuth.instance;
+      final GoogleSignInAccount? googleUser = await _googeSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      final User? user = (await _auth.signInWithCredential(credential)).user;
+      print("signed in${user!.displayName}");
+      return user;
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +55,7 @@ class SignIn extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(
+                  const Text(
                     'Sign in to continue',
                     style: TextStyle(color: Colors.grey),
                   ),
@@ -47,7 +75,12 @@ class SignIn extends StatelessWidget {
                   SignInButton(
                     Buttons.Apple,
                     text: "Sign in with Apple",
-                    onPressed: () {},
+                    onPressed: () {
+                      _googeSignUp().then((value) => Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                            builder: (context) => HomeScreen(),
+                          )));
+                    },
                   ),
                   SignInButton(
                     Buttons.Google,
@@ -59,14 +92,14 @@ class SignIn extends StatelessWidget {
                     text: "Sign in with Facebook",
                     onPressed: () {},
                   ),
-                  Text(
+                  const Text(
                     'By signing in you are agreeing to our',
                     style: TextStyle(color: Colors.grey),
                   ),
-                  Text(
+                  const Text(
                     'Terms and privacy policy',
                     style: TextStyle(color: Colors.grey),
-                  )
+                  ),
                 ],
               ),
             ),

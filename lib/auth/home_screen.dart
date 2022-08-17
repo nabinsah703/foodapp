@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
   Widget singleProducts() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5),
@@ -94,7 +95,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(),
+      drawer: MyDrawer(),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
@@ -301,3 +302,5 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+MyDrawer() {}

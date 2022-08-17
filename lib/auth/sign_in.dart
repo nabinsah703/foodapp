@@ -5,7 +5,7 @@ import 'package:foodapp/auth/home_screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class SignIn extends StatefulWidget {
-  SignIn({Key? key}) : super(key: key);
+  const SignIn({Key? key}) : super(key: key);
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -14,11 +14,11 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   Future<User?> _googeSignUp() async {
     try {
-      final GoogleSignIn _googeSignIn = GoogleSignIn(
+      final GoogleSignIn googeSignIn = GoogleSignIn(
         scopes: ['email'],
       );
-      final FirebaseAuth _auth = FirebaseAuth.instance;
-      final GoogleSignInAccount? googleUser = await _googeSignIn.signIn();
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final GoogleSignInAccount? googleUser = await googeSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
           await googleUser!.authentication;
 
@@ -26,12 +26,13 @@ class _SignInState extends State<SignIn> {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      final User? user = (await _auth.signInWithCredential(credential)).user;
+      final User? user = (await auth.signInWithCredential(credential)).user;
       print("signed in${user!.displayName}");
       return user;
     } catch (e) {
       print(e);
     }
+    return null;
   }
 
   @override
@@ -83,7 +84,7 @@ class _SignInState extends State<SignIn> {
                     onPressed: () {
                       _googeSignUp().then((value) => Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(
-                            builder: (context) => HomeScreen(),
+                            builder: (context) => const HomeScreen(),
                           )));
                     },
                   ),

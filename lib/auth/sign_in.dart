@@ -75,17 +75,17 @@ class _SignInState extends State<SignIn> {
                   SignInButton(
                     Buttons.Apple,
                     text: "Sign in with Apple",
+                    onPressed: () {},
+                  ),
+                  SignInButton(
+                    Buttons.Google,
+                    text: "Sign in with Google",
                     onPressed: () {
                       _googeSignUp().then((value) => Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(
                             builder: (context) => HomeScreen(),
                           )));
                     },
-                  ),
-                  SignInButton(
-                    Buttons.Google,
-                    text: "Sign in with Google",
-                    onPressed: () {},
                   ),
                   SignInButton(
                     Buttons.Facebook,

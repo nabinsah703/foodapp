@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:foodapp/auth/home_screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,27 +13,36 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  Future<User?> _googeSignUp() async {
-    try {
-      final GoogleSignIn googeSignIn = GoogleSignIn(
-        scopes: ['email'],
-      );
-      final FirebaseAuth auth = FirebaseAuth.instance;
-      final GoogleSignInAccount? googleUser = await googeSignIn.signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      final User? user = (await auth.signInWithCredential(credential)).user;
-      print("signed in${user!.displayName}");
-      return user;
-    } catch (e) {
-      print(e);
-    }
-    return null;
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  // sign in with facebook method
+
+  Future<UserCredential> signInWithFacebook() async {
+    // Trigger the sign-in flow
+    final LoginResult loginResult = await FacebookAuth.instance.login();
+
+    // Create a credential from the access token
+    final OAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+    // Once signed in, return the UserCredential
+    return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
 
   @override
@@ -82,7 +92,7 @@ class _SignInState extends State<SignIn> {
                     Buttons.Google,
                     text: "Sign in with Google",
                     onPressed: () {
-                      _googeSignUp().then((value) => Navigator.of(context)
+                      signInWithGoogle().then((value) => Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(
                             builder: (context) => const HomeScreen(),
                           )));
@@ -91,7 +101,12 @@ class _SignInState extends State<SignIn> {
                   SignInButton(
                     Buttons.Facebook,
                     text: "Sign in with Facebook",
-                    onPressed: () {},
+                    onPressed: () {
+                      signInWithFacebook().then((value) => Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          )));
+                    },
                   ),
                   const Text(
                     'By signing in you are agreeing to our',

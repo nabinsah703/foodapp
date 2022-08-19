@@ -9,13 +9,13 @@ Widget listTile({required IconData icon, required String title}) {
     ),
     title: Text(
       title,
-      style: TextStyle(color: Colors.white, fontSize: 20),
+      style: const TextStyle(color: Colors.white, fontSize: 20),
     ),
   );
 }
 
 class MyDrawer extends StatelessWidget {
-  // const MyDrawer({Key? key}) : super(key: key);
+  const MyDrawer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
